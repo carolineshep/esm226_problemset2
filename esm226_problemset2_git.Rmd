@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, include = FALSE, message = F
 ```
 
 ```{r}
+
 # Attach Packages
 
 library(tidyverse)
@@ -23,6 +24,7 @@ library(readxl)
 ## Problem Set 2, Part 1
 
 ```{r}
+
 # Read in the data and filter for Tulare Lake Basin
 
 welldata <- read_excel(here("data", "CaliforniaWellWaterLevelData.xlsx")) %>% 
@@ -206,3 +208,4 @@ ggplot() +
   scale_y_continuous(trans = "reverse")
 
 ```
+**Figure 1.1** Changes in depth to well water (m) from 2007-2019, showing the impact of drought in California from 2011-2017.
