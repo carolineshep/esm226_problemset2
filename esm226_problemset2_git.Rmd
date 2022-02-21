@@ -20,12 +20,13 @@ library(readxl)
 
 ```
 
+## Problem Set 2, Part 1
 
 ```{r}
 # Read in the data and filter for Tulare Lake Basin
 
 welldata <- read_excel(here("data", "CaliforniaWellWaterLevelData.xlsx")) %>% 
-  clean_names() 
+  clean_names()
 
 welldata_tularelake <- welldata %>%  
   filter(basin == "TULARE LAKE") %>% 
@@ -55,6 +56,9 @@ well_5 <- welldata_tularelake %>%
 
 
 ```{r, fig.align = 'center', echo = FALSE, include = TRUE}
+
+# Creating the line graph depicting 5 wells from 1975-Present
+
 ggplot() +
   geom_line(data = well_1, aes(x = decimal_year_of_measurement, y = depth_to_water_m),
             color = "olivedrab4", size = .8) +
@@ -72,10 +76,12 @@ ggplot() +
   scale_y_continuous(trans = "reverse") +
   theme(legend.position = "top") +
   scale_color_manual(values = c("olivedrab4", "lightskyblue3", "thistle3", "plum4", "salmon"))
+
 ```
 **Figure 1.0:** Depicting the change in distance to water level in five wells over a ~50 year timespan
 
 ```{r}
+
 # Finding median well depth for each well from 1975-1980
 
 median_well1_80 <- well_1 %>% 
@@ -131,4 +137,72 @@ change_well3 <- median_well3_80$median-median_well3_20$median
 change_well4 <- median_well4_80$median-median_well4_20$median
 
 change_well5 <- median_well5_80$median-median_well5_20$median
+
+```
+
+
+## Problem Set 2, Part 2
+
+```{r}
+
+# Filtering for wells with well data from 2006-2010 and a measurement after 2018
+criteria_welldata_tularelake <- welldata %>%  
+  filter(basin == "TULARE LAKE") %>% 
+  group_by(stn_id) %>% 
+  mutate(max_year = max(decimal_year_of_measurement)) %>% 
+  filter(decimal_year_of_measurement >= 2006.9999,
+         decimal_year_of_measurement <= 2009.9999) %>% 
+  filter(max_year >= 2018.9999)
+
+# Join data frames to include *all data* for wells with measurements from 2007-2010 and a measurement after 2018 
+
+pt2_welldata_tularelake <- semi_join(welldata, criteria_welldata_tularelake, by = "stn_id") 
+
+# Creating new dataset for part 2 graph
+
+pt2graph_welldata_tularelake <- pt2_welldata_tularelake %>% 
+  filter(decimal_year_of_measurement >= 2006.9999)
+
+# Creating new subsets for 4 wells that fit the new criteria
+
+well_6 <- pt2graph_welldata_tularelake %>% 
+  filter(stn_id == "16725")
+
+well_7 <- pt2graph_welldata_tularelake %>% 
+  filter(stn_id == "16992")
+
+well_8 <- pt2graph_welldata_tularelake %>% 
+  filter(stn_id == "32339")
+
+well_9 <- pt2graph_welldata_tularelake %>% 
+  filter(stn_id == "39125")
+
+```
+
+```{r, fig.align = 'center', echo = FALSE, include = TRUE}
+
+# Creating the line graph for 4 wells from 2007-present
+
+ggplot() +
+  geom_line(data = well_6, aes(x = decimal_year_of_measurement, y = depth_to_water_m),
+            color = "olivedrab4", size = 0.8) +
+  geom_point(data = well_6, aes(x = decimal_year_of_measurement, y = depth_to_water_m),
+            color = "olivedrab4", size = 0.8) +
+  geom_line(data = well_7, aes(x = decimal_year_of_measurement, y = depth_to_water_m),
+            color = "lightskyblue3", size = 0.8) +
+  geom_point(data = well_7, aes(x = decimal_year_of_measurement, y = depth_to_water_m),
+            color = "lightskyblue3", size = 0.8) +
+  geom_line(data = well_8, aes(x = decimal_year_of_measurement, y = depth_to_water_m),
+            color = "orange1", size = 0.8) +
+  geom_point(data = well_8, aes(x = decimal_year_of_measurement, y = depth_to_water_m),
+            color = "orange1", size = 0.8) +
+  geom_line(data = well_9, aes(x = decimal_year_of_measurement, y = depth_to_water_m),
+            color = "plum4", size = 0.8) +
+  geom_point(data = well_9, aes(x = decimal_year_of_measurement, y = depth_to_water_m),
+            color = "plum4", size = 0.8) +
+  theme_bw() +
+  labs(x = "Year",
+       y = "Depth to Water (m)") +
+  scale_y_continuous(trans = "reverse")
+
 ```
