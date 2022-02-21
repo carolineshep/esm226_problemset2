@@ -1,0 +1,134 @@
+---
+title: "ESM 226: Assignment 2 Part 1"
+author: "Caroline Shepherd"
+date: "2/15/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, include = FALSE, message = FALSE)
+```
+
+```{r}
+# Attach Packages
+
+library(tidyverse)
+library(here)
+library(janitor)
+library(dplyr)
+library(readxl)
+
+```
+
+
+```{r}
+# Read in the data and filter for Tulare Lake Basin
+
+welldata <- read_excel(here("data", "CaliforniaWellWaterLevelData.xlsx")) %>% 
+  clean_names() 
+
+welldata_tularelake <- welldata %>%  
+  filter(basin == "TULARE LAKE") %>% 
+  group_by(stn_id) %>% 
+  mutate(max_year = max(decimal_year_of_measurement),
+         min_year = min(decimal_year_of_measurement)) %>% 
+  filter(max_year >= 2015) %>% 
+  filter(min_year <= 1980)
+
+# Creating subsets for 5 wells
+
+well_1 <- welldata_tularelake %>% 
+  filter(stn_id == "15978")
+
+well_2 <- welldata_tularelake %>% 
+  filter(stn_id == "16718")
+
+well_3 <- welldata_tularelake %>% 
+  filter(stn_id == "16729")
+
+well_4 <- welldata_tularelake %>% 
+  filter(stn_id == "32339")
+
+well_5 <- welldata_tularelake %>% 
+  filter(stn_id == "39125")
+```
+
+
+```{r, fig.align = 'center', echo = FALSE, include = TRUE}
+ggplot() +
+  geom_line(data = well_1, aes(x = decimal_year_of_measurement, y = depth_to_water_m),
+            color = "olivedrab4", size = .8) +
+  geom_line(data = well_2, aes(x = decimal_year_of_measurement, y = depth_to_water_m),
+            color = "lightskyblue3", size = .8) +
+  geom_line(data = well_3, aes(x = decimal_year_of_measurement, y = depth_to_water_m),
+            color = "orange1", size = .8) +
+  geom_line(data = well_4, aes(x = decimal_year_of_measurement, y = depth_to_water_m),
+            color = "plum4", size = .8) +
+  geom_line(data = well_5, aes(x = decimal_year_of_measurement, y = depth_to_water_m),
+            color = "salmon", size = .8) +
+  theme_bw() +
+  labs(x = "Year",
+       y = "Depth to Water (m)") +
+  scale_y_continuous(trans = "reverse") +
+  theme(legend.position = "top") +
+  scale_color_manual(values = c("olivedrab4", "lightskyblue3", "thistle3", "plum4", "salmon"))
+```
+**Figure 1.0:** Depicting the change in distance to water level in five wells over a ~50 year timespan
+
+```{r}
+# Finding median well depth for each well from 1975-1980
+
+median_well1_80 <- well_1 %>% 
+  filter(decimal_year_of_measurement >= 1975 & decimal_year_of_measurement <= 1980) %>% 
+  summarize(median = median(depth_to_water_m))
+
+median_well2_80 <- well_2 %>% 
+  filter(decimal_year_of_measurement >= 1975 & decimal_year_of_measurement <= 1980) %>% 
+  summarize(median = median(depth_to_water_m))
+
+median_well3_80 <- well_3 %>% 
+  filter(decimal_year_of_measurement >= 1975 & decimal_year_of_measurement <= 1980) %>% 
+  summarize(median = median(depth_to_water_m))
+
+median_well4_80 <- well_4 %>% 
+  filter(decimal_year_of_measurement >= 1975 & decimal_year_of_measurement <= 1980) %>% 
+  summarize(median = median(depth_to_water_m))
+
+median_well5_80 <- well_5 %>% 
+  filter(decimal_year_of_measurement >= 1975 & decimal_year_of_measurement <= 1980) %>% 
+  summarize(median = median(depth_to_water_m))
+  
+# Finding median well depth for each well from 2015-2020
+
+median_well1_20 <- well_1 %>% 
+  filter(decimal_year_of_measurement >= 2015 & decimal_year_of_measurement <= 2020) %>% 
+  summarize(median = median(depth_to_water_m))
+
+median_well2_20 <- well_2 %>% 
+  filter(decimal_year_of_measurement >= 2015 & decimal_year_of_measurement <= 2020) %>% 
+  summarize(median = median(depth_to_water_m))
+
+median_well3_20 <- well_3 %>% 
+  filter(decimal_year_of_measurement >= 2015 & decimal_year_of_measurement <= 2020) %>% 
+  summarize(median = median(depth_to_water_m))
+
+median_well4_20 <- well_4 %>% 
+  filter(decimal_year_of_measurement >= 2015 & decimal_year_of_measurement <= 2020) %>% 
+  summarize(median = median(depth_to_water_m))
+
+median_well5_20 <- well_5 %>% 
+  filter(decimal_year_of_measurement >= 2015 & decimal_year_of_measurement <= 2020) %>% 
+  summarize(median = median(depth_to_water_m))
+
+# Calculating change in median well depth to water (m) from 1975-80 to 2015-20
+
+change_well1 <- median_well1_80$median-median_well1_20$median
+
+change_well2 <- median_well2_80$median-median_well2_20$median
+
+change_well3 <- median_well3_80$median-median_well3_20$median
+
+change_well4 <- median_well4_80$median-median_well4_20$median
+
+change_well5 <- median_well5_80$median-median_well5_20$median
+```
