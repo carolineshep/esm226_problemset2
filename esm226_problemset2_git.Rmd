@@ -131,13 +131,9 @@ median_well5_20 <- well_5 %>%
 # Calculating change in median well depth to water (m) from 1975-80 to 2015-20
 
 change_well1 <- median_well1_80$median-median_well1_20$median
-
 change_well2 <- median_well2_80$median-median_well2_20$median
-
 change_well3 <- median_well3_80$median-median_well3_20$median
-
 change_well4 <- median_well4_80$median-median_well4_20$median
-
 change_well5 <- median_well5_80$median-median_well5_20$median
 
 ```
